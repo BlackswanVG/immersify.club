@@ -1202,82 +1202,42 @@ async function initializeTestData() {
         });
       }
       
+      // Define venue-experience mappings
+      const venueExperienceMappings = [
+        // NYC Venue Experiences
+        { venueId: nycVenue.id, experienceId: cosmicExperience.id, isExclusive: false },
+        { venueId: nycVenue.id, experienceId: jurassicExperience.id, isExclusive: false },
+        { venueId: nycVenue.id, experienceId: medusaExperience.id, isExclusive: false },
+        
+        // LA Venue Experiences
+        { venueId: laVenue.id, experienceId: cosmicExperience.id, isExclusive: false },
+        { venueId: laVenue.id, experienceId: oceanExperience.id, isExclusive: true },
+        { venueId: laVenue.id, experienceId: spaceExperience.id, isExclusive: false },
+        
+        // Chicago Venue Experiences
+        { venueId: chicagoVenue.id, experienceId: jurassicExperience.id, isExclusive: false },
+        { venueId: chicagoVenue.id, experienceId: medusaExperience.id, isExclusive: false },
+        { venueId: chicagoVenue.id, experienceId: spaceExperience.id, isExclusive: false }
+      ];
+      
       // Link experiences to venues if needed
-      const venueExperiencesData = await db.select().from(venueExperiences);
+      const existingVenueExperiences = await db.select().from(venueExperiences);
+      console.log(`Found ${existingVenueExperiences.length} existing venue-experience relationships`);
       
-      // NYC Venue Experiences
-      if (!venueExperiencesData.some(ve => ve.venueId === nycVenue.id && ve.experienceId === cosmicExperience.id)) {
-        await storage.createVenueExperience({
-          venueId: nycVenue.id,
-          experienceId: cosmicExperience.id,
-          isExclusive: false
-        });
-      }
-      
-      if (!venueExperiencesData.some(ve => ve.venueId === nycVenue.id && ve.experienceId === jurassicExperience.id)) {
-        await storage.createVenueExperience({
-          venueId: nycVenue.id,
-          experienceId: jurassicExperience.id,
-          isExclusive: false
-        });
-      }
-      
-      if (!venueExperiencesData.some(ve => ve.venueId === nycVenue.id && ve.experienceId === medusaExperience.id)) {
-        await storage.createVenueExperience({
-          venueId: nycVenue.id,
-          experienceId: medusaExperience.id,
-          isExclusive: false
-        });
-      }
-      
-      // LA Venue Experiences
-      if (!venueExperiencesData.some(ve => ve.venueId === laVenue.id && ve.experienceId === cosmicExperience.id)) {
-        await storage.createVenueExperience({
-          venueId: laVenue.id,
-          experienceId: cosmicExperience.id,
-          isExclusive: false
-        });
-      }
-      
-      if (!venueExperiencesData.some(ve => ve.venueId === laVenue.id && ve.experienceId === oceanExperience.id)) {
-        await storage.createVenueExperience({
-          venueId: laVenue.id,
-          experienceId: oceanExperience.id,
-          isExclusive: true
-        });
-      }
-      
-      if (!venueExperiencesData.some(ve => ve.venueId === laVenue.id && ve.experienceId === spaceExperience.id)) {
-        await storage.createVenueExperience({
-          venueId: laVenue.id,
-          experienceId: spaceExperience.id,
-          isExclusive: false
-        });
-      }
-      
-      // Chicago Venue Experiences
-      if (!venueExperiencesData.some(ve => ve.venueId === chicagoVenue.id && ve.experienceId === jurassicExperience.id)) {
-        await storage.createVenueExperience({
-          venueId: chicagoVenue.id,
-          experienceId: jurassicExperience.id,
-          isExclusive: false
-        });
-      }
-      
-      if (!venueExperiencesData.some(ve => ve.venueId === chicagoVenue.id && ve.experienceId === medusaExperience.id)) {
-        await storage.createVenueExperience({
-          venueId: chicagoVenue.id,
-          experienceId: medusaExperience.id,
-          isExclusive: false
-        });
-      }
-      
-      if (!venueExperiencesData.some(ve => ve.venueId === chicagoVenue.id && ve.experienceId === spaceExperience.id)) {
-        await storage.createVenueExperience({
-          venueId: chicagoVenue.id,
-          experienceId: spaceExperience.id,
-          isExclusive: false
-        });
+      // Create venue-experience connections if they don't exist
+      for (const mapping of venueExperienceMappings) {
+        const exists = existingVenueExperiences.some(ve => 
+          ve.venueId === mapping.venueId && ve.experienceId === mapping.experienceId
+        );
+        
+        if (!exists) {
+          console.log(`Creating venue-experience relationship: Venue ID ${mapping.venueId} with Experience ID ${mapping.experienceId}`);
+          await storage.createVenueExperience({
+            venueId: mapping.venueId,
+            experienceId: mapping.experienceId,
+            isExclusive: mapping.isExclusive
+          });
+        }
       }
       
       // Add availability slots for each venue-experience combination
