@@ -388,21 +388,28 @@ export default function AdminProducts() {
                         className="w-full h-full object-cover"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="productImage">Update Image</Label>
-                      <Input
-                        id="productImage"
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp"
-                        onChange={(e) => setProductImage(e.target.files ? e.target.files[0] : null)}
-                      />
-                      <Button
-                        onClick={handleProductImageUpload}
-                        disabled={!productImage || uploadProductImageMutation.isPending}
-                        className="w-full"
-                      >
-                        {uploadProductImageMutation.isPending ? 'Uploading...' : 'Upload Image'}
-                      </Button>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="productImage">Update Image</Label>
+                        <Input
+                          id="productImage"
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          onChange={(e) => setProductImage(e.target.files ? e.target.files[0] : null)}
+                          className="mt-1"
+                        />
+                      </div>
+                      
+                      <div className="mt-2">
+                        <Button
+                          type="button"
+                          onClick={handleProductImageUpload}
+                          disabled={!productImage || uploadProductImageMutation.isPending}
+                          className="w-full"
+                        >
+                          {uploadProductImageMutation.isPending ? 'Uploading...' : 'Upload Image'}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
