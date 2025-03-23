@@ -184,6 +184,128 @@ export default function ExperienceDetails() {
                 <TabsContent value="description" className="mt-0">
                   <div className="prose dark:prose-invert max-w-none">
                     <p className="text-lg mb-4">{experience.shortDescription}</p>
+                    
+                    {/* License information based on slug */}
+                    {slug === "jurassic-ride" && (
+                      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                        <div className="flex">
+                          <Info className="text-blue-600 dark:text-blue-500 h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <h3 className="text-blue-800 dark:text-blue-500 font-medium mb-1">Licensing Information</h3>
+                            <p className="text-blue-700 dark:text-blue-400 text-sm">Showcase for Jurassic Ride™ (Trademark of Holozoo, published under license)</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {slug === "hyper-3d-zoo" && (
+                      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                        <div className="flex">
+                          <Info className="text-blue-600 dark:text-blue-500 h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <h3 className="text-blue-800 dark:text-blue-500 font-medium mb-1">Licensing Information</h3>
+                            <p className="text-blue-700 dark:text-blue-400 text-sm">Showcase for Hyper 3D Zoo Samples™ (Trademark of Holozoo, published under license)</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {slug === "global-cities-expo" && (
+                      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                        <div className="flex">
+                          <Info className="text-blue-600 dark:text-blue-500 h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <h3 className="text-blue-800 dark:text-blue-500 font-medium mb-1">Licensing Information</h3>
+                            <p className="text-blue-700 dark:text-blue-400 text-sm">Global Cities Near-Eye Holographic Display Expo (Published under license from BlackSwan Guru LLC)</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {slug === "immersive-art-gallery" && (
+                      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                        <div className="flex">
+                          <Info className="text-blue-600 dark:text-blue-500 h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <h3 className="text-blue-800 dark:text-blue-500 font-medium mb-1">Licensing Information</h3>
+                            <p className="text-blue-700 dark:text-blue-400 text-sm">3D Audio-Visual-Tactile Immersive & Interactive Art Gallery (Published under license from BlackSwan Guru LLC)</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {slug === "zipline-simulator" && (
+                      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                        <div className="flex">
+                          <Info className="text-blue-600 dark:text-blue-500 h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <h3 className="text-blue-800 dark:text-blue-500 font-medium mb-1">Licensing Information</h3>
+                            <p className="text-blue-700 dark:text-blue-400 text-sm">Ziplining Analog Simulator with VR Headset in Digital Twin</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {slug === "parachute-simulator" && (
+                      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                        <div className="flex">
+                          <Info className="text-blue-600 dark:text-blue-500 h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <h3 className="text-blue-800 dark:text-blue-500 font-medium mb-1">Licensing Information</h3>
+                            <p className="text-blue-700 dark:text-blue-400 text-sm">Parachuting Analog Simulator with VR Headset in Digital Twin</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {slug === "race-car-sim" && (
+                      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                        <div className="flex">
+                          <Info className="text-blue-600 dark:text-blue-500 h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <h3 className="text-blue-800 dark:text-blue-500 font-medium mb-1">Licensing Information</h3>
+                            <p className="text-blue-700 dark:text-blue-400 text-sm">Race Car Simulator</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {slug === "flight-sim" && (
+                      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                        <div className="flex">
+                          <Info className="text-blue-600 dark:text-blue-500 h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <h3 className="text-blue-800 dark:text-blue-500 font-medium mb-1">Licensing Information</h3>
+                            <p className="text-blue-700 dark:text-blue-400 text-sm">Flight Simulator</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {slug === "fpv-drone-sim" && (
+                      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                        <div className="flex">
+                          <Info className="text-blue-600 dark:text-blue-500 h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <h3 className="text-blue-800 dark:text-blue-500 font-medium mb-1">Licensing Information</h3>
+                            <p className="text-blue-700 dark:text-blue-400 text-sm">FPV Drone Simulator</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {slug === "anaglyph-3d-showcase" && (
+                      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
+                        <div className="flex">
+                          <Info className="text-blue-600 dark:text-blue-500 h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <h3 className="text-blue-800 dark:text-blue-500 font-medium mb-1">Licensing Information</h3>
+                            <p className="text-blue-700 dark:text-blue-400 text-sm">Anaglyph 3D Display Showcase</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
                     <p>{experience.description}</p>
                     
                     {experience.specialEquipment && (

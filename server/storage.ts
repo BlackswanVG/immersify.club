@@ -764,7 +764,7 @@ export class DatabaseStorage implements IStorage {
       const venueExperiencesList = await db
         .select()
         .from(venueExperiences)
-        .where(eq(venueExperiences.venue_id, venueId));
+        .where(eq(venueExperiences.venueId, venueId));
 
       console.log(`Found ${venueExperiencesList.length} venue-experience mappings for venue ID ${venueId}`);
       
@@ -772,7 +772,7 @@ export class DatabaseStorage implements IStorage {
         return [];
       }
 
-      const experienceIds = venueExperiencesList.map(ve => ve.experience_id);
+      const experienceIds = venueExperiencesList.map(ve => ve.experienceId);
       console.log(`Experience IDs to fetch: ${experienceIds.join(', ')}`);
       
       const result = await db
@@ -801,14 +801,14 @@ export class DatabaseStorage implements IStorage {
     return db
       .select()
       .from(venueExperiences)
-      .where(eq(venueExperiences.venue_id, venueId));
+      .where(eq(venueExperiences.venueId, venueId));
   }
 
   async getVenueExperiencesByExperienceId(experienceId: number): Promise<VenueExperience[]> {
     return db
       .select()
       .from(venueExperiences)
-      .where(eq(venueExperiences.experience_id, experienceId));
+      .where(eq(venueExperiences.experienceId, experienceId));
   }
 
   // Availability Slots
