@@ -1004,7 +1004,7 @@ export class DatabaseStorage implements IStorage {
 // Use DatabaseStorage instead of MemStorage to persist data in Postgres
 export const storage = new DatabaseStorage();
 
-// Initialize some test data if needed
+// Initialize requested data
 async function initializeTestData() {
   try {
     console.log("Checking if database needs sample data...");
@@ -1013,9 +1013,9 @@ async function initializeTestData() {
     
     console.log(`Found ${experiences.length} experiences and ${allVenueExperiences.length} venue-experience relationships`);
     
-    // We need at least 5 experiences and 9 venue-experience relationships (3 venues × 3 experiences)
-    if (experiences.length < 5 || allVenueExperiences.length < 9) {
-      console.log("Adding more sample data...");
+    // If we don't have exactly 10 experiences, add them
+    if (experiences.length < 10) {
+      console.log("Creating the 10 requested experiences...");
       
       // Add membership tiers if they don't exist
       const tiers = await storage.getAllMembershipTiers();
@@ -1099,142 +1099,307 @@ async function initializeTestData() {
         });
       }
       
-      // Create experiences if needed
-      let cosmicExperience = experiences.find(e => e.slug === "cosmic-playground");
-      let jurassicExperience = experiences.find(e => e.slug === "jurassic-ride");
-      let oceanExperience = experiences.find(e => e.slug === "deep-ocean-odyssey");
-      let medusaExperience = experiences.find(e => e.slug === "medusa-trial");
-      let spaceExperience = experiences.find(e => e.slug === "space-station-rescue");
+      // Create the 10 requested experiences
+      console.log("Creating the 10 specific experiences requested by user...");
       
-      if (!cosmicExperience) {
-        cosmicExperience = await storage.createExperience({
-          name: "Cosmic Playground",
-          slug: "cosmic-playground",
-          description: "Enter a world where physics doesn't exist, and create your own cosmic sculptures using cutting-edge technology that responds to your movements and thoughts.",
-          shortDescription: "Enter a world where physics doesn't exist, and create your own cosmic sculptures.",
-          duration: 60,
-          price: 32,
-          minAge: 0,
-          maxAge: 100,
-          requirements: "None",
-          specialEquipment: "No special equipment",
-          imageUrl: "https://images.unsplash.com/photo-1576239319969-84afb35af6b8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-          isPopular: true,
-          isNew: false,
-          licenseInfo: "Licensed by Cosmic Innovations Inc.",
-          galleryImages: []
-        });
-      }
-      
-      if (!jurassicExperience) {
-        jurassicExperience = await storage.createExperience({
+      // 1. Jurassic Ride
+      let jurassicRide = experiences.find(e => e.slug === "jurassic-ride");
+      if (!jurassicRide) {
+        jurassicRide = await storage.createExperience({
           name: "Jurassic Ride",
           slug: "jurassic-ride",
-          description: "Travel back 65 million years to witness dinosaurs in their natural habitat. This multi-sensory experience combines visual effects, physical sensations, and realistic sound design to create the ultimate prehistoric adventure.",
-          shortDescription: "Travel back 65 million years to witness dinosaurs in their natural habitat.",
+          description: "Showcase for Jurassic Ride™ (Trademark of Holozoo, published under license)",
+          shortDescription: "Showcase for Jurassic Ride™ (Trademark of Holozoo, published under license)",
           duration: 45,
-          price: 39,
+          price: 39.99,
           minAge: 8,
           maxAge: 100,
-          requirements: "Not recommended for those with motion sickness or heart conditions",
+          requirements: "Not recommended for those with motion sickness",
           specialEquipment: "All equipment provided",
           imageUrl: "https://images.unsplash.com/photo-1525877442103-5ddb2089b2bb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
           isPopular: true,
           isNew: false,
-          licenseInfo: "Licensed by Holozoo Inc.",
-          licenseOwner: "Holozoo Inc.",
+          licenseInfo: "Trademark of Holozoo, published under license",
+          licenseOwner: "Holozoo",
           category: "Adventure",
           tags: ["dinosaurs", "prehistoric", "adventure"],
           galleryImages: []
         });
+        console.log("Created Jurassic Ride experience");
       }
       
-      if (!oceanExperience) {
-        oceanExperience = await storage.createExperience({
-          name: "Deep Ocean Odyssey",
-          slug: "deep-ocean-odyssey",
-          description: "Descend to the darkest depths of the ocean in a groundbreaking experience that simulates a deep-sea expedition. Encounter bioluminescent creatures, underwater volcanoes, and marine life never seen by human eyes.",
-          shortDescription: "Descend to the darkest depths of the ocean in a groundbreaking experience.",
+      // 2. Hyper 3D Zoo
+      let hyper3dZoo = experiences.find(e => e.slug === "hyper-3d-zoo");
+      if (!hyper3dZoo) {
+        hyper3dZoo = await storage.createExperience({
+          name: "Hyper 3D Zoo Samples",
+          slug: "hyper-3d-zoo",
+          description: "Showcase for Hyper 3D Zoo Samples™ (Trademark of Holozoo, published under license)",
+          shortDescription: "Showcase for Hyper 3D Zoo Samples™ (Trademark of Holozoo, published under license)",
           duration: 50,
-          price: 35,
+          price: 34.99,
+          minAge: 5,
+          maxAge: 100,
+          requirements: "None",
+          specialEquipment: "3D glasses provided",
+          imageUrl: "https://images.unsplash.com/photo-1566400628146-ae8f27849e90?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          isPopular: true,
+          isNew: true,
+          licenseInfo: "Trademark of Holozoo, published under license",
+          licenseOwner: "Holozoo",
+          category: "Education",
+          tags: ["animals", "3d", "education"],
+          galleryImages: []
+        });
+        console.log("Created Hyper 3D Zoo experience");
+      }
+      
+      // 3. Global Cities Expo
+      let globalCitiesExpo = experiences.find(e => e.slug === "global-cities-expo");
+      if (!globalCitiesExpo) {
+        globalCitiesExpo = await storage.createExperience({
+          name: "Global Cities Expo",
+          slug: "global-cities-expo",
+          description: "Global Cities Near-Eye Holographic Display Expo (Published under license from BlackSwan Guru LLC)",
+          shortDescription: "Global Cities Near-Eye Holographic Display Expo (Published under license from BlackSwan Guru LLC)",
+          duration: 60,
+          price: 42.99,
+          minAge: 10,
+          maxAge: 100,
+          requirements: "None",
+          specialEquipment: "Holographic headsets provided",
+          imageUrl: "https://images.unsplash.com/photo-1493540447904-49763eecf55f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          isPopular: false,
+          isNew: true,
+          licenseInfo: "Published under license from BlackSwan Guru LLC",
+          licenseOwner: "BlackSwan Guru LLC",
+          category: "Education",
+          tags: ["cities", "architecture", "education"],
+          galleryImages: []
+        });
+        console.log("Created Global Cities Expo experience");
+      }
+      
+      // 4. Immersive Art Gallery
+      let immersiveArtGallery = experiences.find(e => e.slug === "immersive-art-gallery");
+      if (!immersiveArtGallery) {
+        immersiveArtGallery = await storage.createExperience({
+          name: "Immersive Art Gallery",
+          slug: "immersive-art-gallery",
+          description: "3D Audio-Visual-Tactile Immersive & Interactive Art Gallery (Published under license from BlackSwan Guru LLC)",
+          shortDescription: "3D Audio-Visual-Tactile Immersive & Interactive Art Gallery (Published under license from BlackSwan Guru LLC)",
+          duration: 90,
+          price: 45.99,
+          minAge: 12,
+          maxAge: 100,
+          requirements: "None",
+          specialEquipment: "Tactile gloves provided",
+          imageUrl: "https://images.unsplash.com/photo-1555920141-8a18f8eb9f6b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          isPopular: true,
+          isNew: false,
+          licenseInfo: "Published under license from BlackSwan Guru LLC",
+          licenseOwner: "BlackSwan Guru LLC",
+          category: "Art",
+          tags: ["art", "interactive", "gallery"],
+          galleryImages: []
+        });
+        console.log("Created Immersive Art Gallery experience");
+      }
+      
+      // 5. Zipline Simulator
+      let ziplineSimulator = experiences.find(e => e.slug === "zipline-simulator");
+      if (!ziplineSimulator) {
+        ziplineSimulator = await storage.createExperience({
+          name: "Zipline Simulator",
+          slug: "zipline-simulator",
+          description: "Ziplining Analog Simulator with VR Headset in Digital Twin",
+          shortDescription: "Ziplining Analog Simulator with VR Headset in Digital Twin",
+          duration: 30,
+          price: 29.99,
+          minAge: 14,
+          maxAge: 100,
+          requirements: "Not recommended for those with fear of heights",
+          specialEquipment: "VR headset and safety harness provided",
+          imageUrl: "https://images.unsplash.com/photo-1506953823976-52e1fdc0149a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          isPopular: false,
+          isNew: true,
+          licenseInfo: "",
+          category: "Adventure",
+          tags: ["zipline", "adventure", "simulation"],
+          galleryImages: []
+        });
+        console.log("Created Zipline Simulator experience");
+      }
+      
+      // 6. Parachute Simulator
+      let parachuteSimulator = experiences.find(e => e.slug === "parachute-simulator");
+      if (!parachuteSimulator) {
+        parachuteSimulator = await storage.createExperience({
+          name: "Parachute Simulator",
+          slug: "parachute-simulator",
+          description: "Parachuting Analog Simulator with VR Headset in Digital Twin",
+          shortDescription: "Parachuting Analog Simulator with VR Headset in Digital Twin",
+          duration: 25,
+          price: 32.99,
+          minAge: 16,
+          maxAge: 100,
+          requirements: "Not recommended for those with fear of heights or motion sickness",
+          specialEquipment: "VR headset and harness system provided",
+          imageUrl: "https://images.unsplash.com/photo-1621472124503-a760c1146b9b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          isPopular: false,
+          isNew: true,
+          licenseInfo: "",
+          category: "Adventure",
+          tags: ["parachute", "freefall", "simulation"],
+          galleryImages: []
+        });
+        console.log("Created Parachute Simulator experience");
+      }
+      
+      // 7. Race Car Simulator
+      let raceCarSim = experiences.find(e => e.slug === "race-car-sim");
+      if (!raceCarSim) {
+        raceCarSim = await storage.createExperience({
+          name: "Race Car Simulator",
+          slug: "race-car-sim",
+          description: "Race Car Simulator",
+          shortDescription: "Race Car Simulator",
+          duration: 45,
+          price: 36.99,
+          minAge: 14,
+          maxAge: 100,
+          requirements: "None",
+          specialEquipment: "Racing cockpit and haptic feedback system provided",
+          imageUrl: "https://images.unsplash.com/photo-1560800452-f2d475982b96?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          isPopular: true,
+          isNew: false,
+          licenseInfo: "",
+          category: "Gaming",
+          tags: ["racing", "cars", "simulation"],
+          galleryImages: []
+        });
+        console.log("Created Race Car Simulator experience");
+      }
+      
+      // 8. Flight Simulator
+      let flightSim = experiences.find(e => e.slug === "flight-sim");
+      if (!flightSim) {
+        flightSim = await storage.createExperience({
+          name: "Flight Simulator",
+          slug: "flight-sim",
+          description: "Flight Simulator",
+          shortDescription: "Flight Simulator",
+          duration: 60,
+          price: 40.99,
+          minAge: 12,
+          maxAge: 100,
+          requirements: "None",
+          specialEquipment: "Cockpit simulator with full motion platform",
+          imageUrl: "https://images.unsplash.com/photo-1556388158-158ea5ccacbd?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          isPopular: true,
+          isNew: false,
+          licenseInfo: "",
+          category: "Gaming",
+          tags: ["flight", "aviation", "simulation"],
+          galleryImages: []
+        });
+        console.log("Created Flight Simulator experience");
+      }
+      
+      // 9. FPV Drone Simulator
+      let fpvDroneSim = experiences.find(e => e.slug === "fpv-drone-sim");
+      if (!fpvDroneSim) {
+        fpvDroneSim = await storage.createExperience({
+          name: "FPV Drone Simulator",
+          slug: "fpv-drone-sim",
+          description: "FPV Drone Simulator",
+          shortDescription: "FPV Drone Simulator",
+          duration: 40,
+          price: 28.99,
+          minAge: 10,
+          maxAge: 100,
+          requirements: "None",
+          specialEquipment: "FPV goggles and drone controller provided",
+          imageUrl: "https://images.unsplash.com/photo-1507582020474-9a35b7d455d9?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          isPopular: false,
+          isNew: true,
+          licenseInfo: "",
+          category: "Gaming",
+          tags: ["drone", "fpv", "simulation"],
+          galleryImages: []
+        });
+        console.log("Created FPV Drone Simulator experience");
+      }
+      
+      // 10. Anaglyph 3D Showcase
+      let anaglyph3dShowcase = experiences.find(e => e.slug === "anaglyph-3d-showcase");
+      if (!anaglyph3dShowcase) {
+        anaglyph3dShowcase = await storage.createExperience({
+          name: "Anaglyph 3D Showcase",
+          slug: "anaglyph-3d-showcase",
+          description: "Anaglyph 3D Display Showcase",
+          shortDescription: "Anaglyph 3D Display Showcase",
+          duration: 35,
+          price: 24.99,
           minAge: 6,
           maxAge: 100,
           requirements: "None",
-          specialEquipment: "All equipment provided",
-          imageUrl: "https://images.unsplash.com/photo-1551244072-5d12893278ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-          isPopular: false,
-          isNew: true,
-          licenseInfo: "Licensed by OceanVR Ltd.",
-          licenseOwner: "OceanVR Ltd.",
-          category: "Education",
-          tags: ["ocean", "marine", "education"],
-          galleryImages: []
-        });
-      }
-      
-      if (!medusaExperience) {
-        medusaExperience = await storage.createExperience({
-          name: "Medusa Trial",
-          slug: "medusa-trial",
-          description: "Step into Greek mythology as you navigate the labyrinth of the Medusa. Using advanced haptic technology, you'll feel the cold stone as your companions are turned to stone around you. Can you defeat the Medusa without looking at her?",
-          shortDescription: "Step into Greek mythology as you navigate the labyrinth of the Medusa.",
-          duration: 40,
-          price: 29,
-          minAge: 12,
-          maxAge: 100,
-          requirements: "Not recommended for those with claustrophobia",
-          specialEquipment: "All equipment provided",
-          imageUrl: "https://images.unsplash.com/photo-1608506375591-b90e055d9eec?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          specialEquipment: "3D glasses provided",
+          imageUrl: "https://images.unsplash.com/photo-1598395927056-8d895e701c3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
           isPopular: false,
           isNew: false,
-          licenseInfo: "Licensed by BlackSwan Guru LLC",
-          licenseOwner: "BlackSwan Guru LLC",
-          category: "Mythology",
-          tags: ["greek", "mythology", "puzzle"],
+          licenseInfo: "",
+          category: "Technology",
+          tags: ["3d", "anaglyph", "technology"],
           galleryImages: []
         });
+        console.log("Created Anaglyph 3D Showcase experience");
       }
       
-      if (!spaceExperience) {
-        spaceExperience = await storage.createExperience({
-          name: "Space Station Rescue",
-          slug: "space-station-rescue",
-          description: "A team-based experience where you and your crew must work together to repair a critically damaged space station. Solve complex puzzles, perform spacewalks, and navigate zero-gravity environments to save the day.",
-          shortDescription: "Work together to repair a critically damaged space station.",
-          duration: 75,
-          price: 45,
-          minAge: 14,
-          maxAge: 100,
-          requirements: "Teamwork required, 4-6 participants",
-          specialEquipment: "All equipment provided",
-          imageUrl: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-          isPopular: true,
-          isNew: true,
-          licenseInfo: "Licensed by Orbital Entertainment",
-          licenseOwner: "Orbital Entertainment",
-          category: "Team",
-          tags: ["space", "teamwork", "puzzle"],
-          galleryImages: []
-        });
-      }
-      
-      // Define venue-experience mappings
-      const venueExperienceMappings = [
-        // NYC Venue Experiences
-        { venueId: nycVenue.id, experienceId: cosmicExperience.id, isExclusive: false },
-        { venueId: nycVenue.id, experienceId: jurassicExperience.id, isExclusive: false },
-        { venueId: nycVenue.id, experienceId: medusaExperience.id, isExclusive: false },
-        
-        // LA Venue Experiences
-        { venueId: laVenue.id, experienceId: cosmicExperience.id, isExclusive: false },
-        { venueId: laVenue.id, experienceId: oceanExperience.id, isExclusive: true },
-        { venueId: laVenue.id, experienceId: spaceExperience.id, isExclusive: false },
-        
-        // Chicago Venue Experiences
-        { venueId: chicagoVenue.id, experienceId: jurassicExperience.id, isExclusive: false },
-        { venueId: chicagoVenue.id, experienceId: medusaExperience.id, isExclusive: false },
-        { venueId: chicagoVenue.id, experienceId: spaceExperience.id, isExclusive: false }
+      // Store all experiences in an array for venue mappings
+      const allExperiences = [
+        jurassicRide,
+        hyper3dZoo,
+        globalCitiesExpo,
+        immersiveArtGallery,
+        ziplineSimulator,
+        parachuteSimulator,
+        raceCarSim,
+        flightSim,
+        fpvDroneSim,
+        anaglyph3dShowcase
       ];
+      
+      // Define venue-experience mappings for our 10 experiences
+      const venueExperienceMappings = [];
+      
+      // Add all experiences to each venue
+      for (const experience of allExperiences) {
+        if (!experience) continue;
+        
+        // Add to NYC venue
+        venueExperienceMappings.push({
+          venueId: nycVenue.id,
+          experienceId: experience.id,
+          isExclusive: false
+        });
+        
+        // Add to LA venue
+        venueExperienceMappings.push({
+          venueId: laVenue.id,
+          experienceId: experience.id,
+          isExclusive: false
+        });
+        
+        // Add to Chicago venue
+        venueExperienceMappings.push({
+          venueId: chicagoVenue.id,
+          experienceId: experience.id,
+          isExclusive: false
+        });
+      }
+      
+      console.log(`Created ${venueExperienceMappings.length} venue-experience mappings`);
       
       // Link experiences to venues if needed
       const existingVenueExperiences = await db.select().from(venueExperiences);
@@ -1271,20 +1436,27 @@ async function initializeTestData() {
       dayAfter.setDate(dayAfter.getDate() + 2);
       const formattedDayAfter = `${dayAfter.getFullYear()}-${String(dayAfter.getMonth() + 1).padStart(2, '0')}-${String(dayAfter.getDate()).padStart(2, '0')}`;
       
-      // NYC venue slots
-      await addAvailabilitySlotsIfNotExist(nycVenue.id, cosmicExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
-      await addAvailabilitySlotsIfNotExist(nycVenue.id, jurassicExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
-      await addAvailabilitySlotsIfNotExist(nycVenue.id, medusaExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
+      // Add availability slots for all experiences at all venues
+      console.log("Creating availability slots for all experiences at all venues...");
       
-      // LA venue slots
-      await addAvailabilitySlotsIfNotExist(laVenue.id, cosmicExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
-      await addAvailabilitySlotsIfNotExist(laVenue.id, oceanExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
-      await addAvailabilitySlotsIfNotExist(laVenue.id, spaceExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
+      // Create dates array
+      const dates = [formattedToday, formattedTomorrow, formattedDayAfter];
       
-      // Chicago venue slots
-      await addAvailabilitySlotsIfNotExist(chicagoVenue.id, jurassicExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
-      await addAvailabilitySlotsIfNotExist(chicagoVenue.id, medusaExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
-      await addAvailabilitySlotsIfNotExist(chicagoVenue.id, spaceExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
+      // Add slots for each experience at each venue
+      for (const experience of allExperiences) {
+        if (!experience) continue;
+        
+        console.log(`Adding availability slots for ${experience.name}...`);
+        
+        // NYC venue slots
+        await addAvailabilitySlotsIfNotExist(nycVenue.id, experience.id, dates);
+        
+        // LA venue slots
+        await addAvailabilitySlotsIfNotExist(laVenue.id, experience.id, dates);
+        
+        // Chicago venue slots
+        await addAvailabilitySlotsIfNotExist(chicagoVenue.id, experience.id, dates);
+      }
       
       // Add products for merchandise
       const products = await storage.getAllProducts();
