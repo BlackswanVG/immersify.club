@@ -9,6 +9,8 @@ import {
   cartItems, type CartItem, type InsertCartItem,
   membershipTiers, type MembershipTier, type InsertMembershipTier
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and, like, sql } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -111,7 +113,7 @@ export class MemStorage implements IStorage {
     this.bookingIdCounter = 1;
     this.productIdCounter = 1;
     this.cartItemIdCounter = 1;
-    this.membershipTierIdCounter =
+    this.membershipTierIdCounter = 1;
     
     // Initialize with sample data
     this.initializeSampleData();
@@ -650,4 +652,342 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  // Users
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+
+  async updateUser(id: number, userData: Partial<User>): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set(userData)
+      .where(eq(users.id, id))
+      .returning();
+    return user;
+  }
+
+  // Experiences
+  async getAllExperiences(): Promise<Experience[]> {
+    return db.select().from(experiences);
+  }
+
+  async getExperience(id: number): Promise<Experience | undefined> {
+    const [experience] = await db.select().from(experiences).where(eq(experiences.id, id));
+    return experience || undefined;
+  }
+
+  async getExperienceBySlug(slug: string): Promise<Experience | undefined> {
+    const [experience] = await db.select().from(experiences).where(eq(experiences.slug, slug));
+    return experience || undefined;
+  }
+
+  async createExperience(experience: InsertExperience): Promise<Experience> {
+    const [newExperience] = await db
+      .insert(experiences)
+      .values(experience)
+      .returning();
+    return newExperience;
+  }
+
+  async updateExperience(id: number, experienceData: Partial<Experience>): Promise<Experience | undefined> {
+    const [updatedExperience] = await db
+      .update(experiences)
+      .set(experienceData)
+      .where(eq(experiences.id, id))
+      .returning();
+    return updatedExperience;
+  }
+
+  async deleteExperience(id: number): Promise<boolean> {
+    const result = await db
+      .delete(experiences)
+      .where(eq(experiences.id, id))
+      .returning();
+    return result.length > 0;
+  }
+
+  // Venues
+  async getAllVenues(): Promise<Venue[]> {
+    return db.select().from(venues);
+  }
+
+  async getVenue(id: number): Promise<Venue | undefined> {
+    const [venue] = await db.select().from(venues).where(eq(venues.id, id));
+    return venue || undefined;
+  }
+
+  async getVenueBySlug(slug: string): Promise<Venue | undefined> {
+    const [venue] = await db.select().from(venues).where(eq(venues.slug, slug));
+    return venue || undefined;
+  }
+
+  async createVenue(venue: InsertVenue): Promise<Venue> {
+    const [newVenue] = await db
+      .insert(venues)
+      .values(venue)
+      .returning();
+    return newVenue;
+  }
+
+  async updateVenue(id: number, venueData: Partial<Venue>): Promise<Venue | undefined> {
+    const [updatedVenue] = await db
+      .update(venues)
+      .set(venueData)
+      .where(eq(venues.id, id))
+      .returning();
+    return updatedVenue;
+  }
+
+  async getVenueExperiences(venueId: number): Promise<Experience[]> {
+    const venueExperiencesList = await db
+      .select()
+      .from(venueExperiences)
+      .where(eq(venueExperiences.venueId, venueId));
+
+    if (venueExperiencesList.length === 0) {
+      return [];
+    }
+
+    const experienceIds = venueExperiencesList.map(ve => ve.experienceId);
+    
+    return db
+      .select()
+      .from(experiences)
+      .where(sql`${experiences.id} IN (${experienceIds.join(',')})`);
+  }
+
+  // Venue Experiences
+  async createVenueExperience(venueExperience: InsertVenueExperience): Promise<VenueExperience> {
+    const [newVenueExperience] = await db
+      .insert(venueExperiences)
+      .values(venueExperience)
+      .returning();
+    return newVenueExperience;
+  }
+
+  async getVenueExperiencesByVenueId(venueId: number): Promise<VenueExperience[]> {
+    return db
+      .select()
+      .from(venueExperiences)
+      .where(eq(venueExperiences.venueId, venueId));
+  }
+
+  async getVenueExperiencesByExperienceId(experienceId: number): Promise<VenueExperience[]> {
+    return db
+      .select()
+      .from(venueExperiences)
+      .where(eq(venueExperiences.experienceId, experienceId));
+  }
+
+  // Availability Slots
+  async getAvailabilitySlots(venueId: number, experienceId: number, date: string): Promise<AvailabilitySlot[]> {
+    return db
+      .select()
+      .from(availabilitySlots)
+      .where(
+        and(
+          eq(availabilitySlots.venueId, venueId),
+          eq(availabilitySlots.experienceId, experienceId),
+          eq(availabilitySlots.date, date)
+        )
+      );
+  }
+
+  async createAvailabilitySlot(slot: InsertAvailabilitySlot): Promise<AvailabilitySlot> {
+    const [newSlot] = await db
+      .insert(availabilitySlots)
+      .values(slot)
+      .returning();
+    return newSlot;
+  }
+
+  async updateAvailabilitySlot(id: number, slotData: Partial<AvailabilitySlot>): Promise<AvailabilitySlot | undefined> {
+    const [updatedSlot] = await db
+      .update(availabilitySlots)
+      .set(slotData)
+      .where(eq(availabilitySlots.id, id))
+      .returning();
+    return updatedSlot;
+  }
+
+  // Bookings
+  async createBooking(booking: InsertBooking): Promise<Booking> {
+    const [newBooking] = await db
+      .insert(bookings)
+      .values(booking)
+      .returning();
+    return newBooking;
+  }
+
+  async getBooking(id: number): Promise<Booking | undefined> {
+    const [booking] = await db
+      .select()
+      .from(bookings)
+      .where(eq(bookings.id, id));
+    return booking || undefined;
+  }
+
+  async getUserBookings(userId: number): Promise<Booking[]> {
+    return db
+      .select()
+      .from(bookings)
+      .where(eq(bookings.userId, userId));
+  }
+
+  async updateBooking(id: number, bookingData: Partial<Booking>): Promise<Booking | undefined> {
+    const [updatedBooking] = await db
+      .update(bookings)
+      .set(bookingData)
+      .where(eq(bookings.id, id))
+      .returning();
+    return updatedBooking;
+  }
+
+  // Products
+  async getAllProducts(): Promise<Product[]> {
+    return db.select().from(products);
+  }
+
+  async getProduct(id: number): Promise<Product | undefined> {
+    const [product] = await db
+      .select()
+      .from(products)
+      .where(eq(products.id, id));
+    return product || undefined;
+  }
+
+  async getProductBySlug(slug: string): Promise<Product | undefined> {
+    const [product] = await db
+      .select()
+      .from(products)
+      .where(eq(products.slug, slug));
+    return product || undefined;
+  }
+
+  async createProduct(product: InsertProduct): Promise<Product> {
+    const [newProduct] = await db
+      .insert(products)
+      .values(product)
+      .returning();
+    return newProduct;
+  }
+
+  async updateProduct(id: number, productData: Partial<Product>): Promise<Product | undefined> {
+    const [updatedProduct] = await db
+      .update(products)
+      .set(productData)
+      .where(eq(products.id, id))
+      .returning();
+    return updatedProduct;
+  }
+
+  // Cart Items
+  async getCartItems(userId?: number, sessionId?: string): Promise<CartItem[]> {
+    if (userId) {
+      return db
+        .select()
+        .from(cartItems)
+        .where(eq(cartItems.userId, userId));
+    } else if (sessionId) {
+      return db
+        .select()
+        .from(cartItems)
+        .where(eq(cartItems.sessionId, sessionId));
+    }
+    return [];
+  }
+
+  async addCartItem(cartItem: InsertCartItem): Promise<CartItem> {
+    const [newCartItem] = await db
+      .insert(cartItems)
+      .values(cartItem)
+      .returning();
+    return newCartItem;
+  }
+
+  async updateCartItem(id: number, quantity: number): Promise<CartItem | undefined> {
+    const [updatedCartItem] = await db
+      .update(cartItems)
+      .set({ quantity })
+      .where(eq(cartItems.id, id))
+      .returning();
+    return updatedCartItem;
+  }
+
+  async removeCartItem(id: number): Promise<boolean> {
+    const result = await db
+      .delete(cartItems)
+      .where(eq(cartItems.id, id))
+      .returning();
+    return result.length > 0;
+  }
+
+  async clearCart(userId?: number, sessionId?: string): Promise<boolean> {
+    if (userId) {
+      const result = await db
+        .delete(cartItems)
+        .where(eq(cartItems.userId, userId))
+        .returning();
+      return result.length > 0;
+    } else if (sessionId) {
+      const result = await db
+        .delete(cartItems)
+        .where(eq(cartItems.sessionId, sessionId))
+        .returning();
+      return result.length > 0;
+    }
+    return false;
+  }
+
+  // Membership Tiers
+  async getAllMembershipTiers(): Promise<MembershipTier[]> {
+    return db.select().from(membershipTiers);
+  }
+
+  async getMembershipTier(id: number): Promise<MembershipTier | undefined> {
+    const [tier] = await db
+      .select()
+      .from(membershipTiers)
+      .where(eq(membershipTiers.id, id));
+    return tier || undefined;
+  }
+
+  async getMembershipTierByName(name: string): Promise<MembershipTier | undefined> {
+    const [tier] = await db
+      .select()
+      .from(membershipTiers)
+      .where(eq(membershipTiers.name, name));
+    return tier || undefined;
+  }
+
+  async createMembershipTier(tier: InsertMembershipTier): Promise<MembershipTier> {
+    const [newTier] = await db
+      .insert(membershipTiers)
+      .values(tier)
+      .returning();
+    return newTier;
+  }
+}
+
+// Use DatabaseStorage instead of MemStorage to persist data in Postgres
+export const storage = new DatabaseStorage();

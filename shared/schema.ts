@@ -1,6 +1,7 @@
-import { pgTable, text, serial, integer, boolean, timestamp, real, date, time } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, real, date, time, primaryKey, foreignKey } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { relations } from "drizzle-orm";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -28,6 +29,11 @@ export const experiences = pgTable("experiences", {
   imageUrl: text("image_url").notNull(),
   isPopular: boolean("is_popular").default(false),
   isNew: boolean("is_new").default(false),
+  licenseInfo: text("license_info"),
+  licenseOwner: text("license_owner"),
+  category: text("category"),
+  tags: text("tags").array(),
+  galleryImages: text("gallery_images").array(),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
