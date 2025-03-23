@@ -19,7 +19,6 @@ export default function AdminExperiences() {
   // Fetch all experiences
   const { data: experiences = [], isLoading } = useQuery({
     queryKey: ['/api/experiences'],
-    queryFn: () => apiRequest('/api/experiences'),
   });
 
   // Upload main image mutation
