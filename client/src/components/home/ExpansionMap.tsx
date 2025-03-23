@@ -139,8 +139,7 @@ export default function ExpansionMap() {
           <Badge variant="default" className="bg-primary text-primary-foreground">
             Current Location
           </Badge>
-          <Badge variant="outline">Planned 2026</Badge>
-          <Badge variant="outline">Planned 2027</Badge>
+          <Badge variant="outline">Future Location</Badge>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
