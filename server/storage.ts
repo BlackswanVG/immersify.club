@@ -1239,7 +1239,7 @@ async function initializeTestData() {
         });
       }
       
-      if (!venueExperiences.some(ve => ve.venueId === laVenue.id && ve.experienceId === oceanExperience.id)) {
+      if (!venueExperiencesData.some(ve => ve.venueId === laVenue.id && ve.experienceId === oceanExperience.id)) {
         await storage.createVenueExperience({
           venueId: laVenue.id,
           experienceId: oceanExperience.id,
@@ -1247,7 +1247,7 @@ async function initializeTestData() {
         });
       }
       
-      if (!venueExperiences.some(ve => ve.venueId === laVenue.id && ve.experienceId === spaceExperience.id)) {
+      if (!venueExperiencesData.some(ve => ve.venueId === laVenue.id && ve.experienceId === spaceExperience.id)) {
         await storage.createVenueExperience({
           venueId: laVenue.id,
           experienceId: spaceExperience.id,
@@ -1256,7 +1256,7 @@ async function initializeTestData() {
       }
       
       // Chicago Venue Experiences
-      if (!venueExperiences.some(ve => ve.venueId === chicagoVenue.id && ve.experienceId === jurassicExperience.id)) {
+      if (!venueExperiencesData.some(ve => ve.venueId === chicagoVenue.id && ve.experienceId === jurassicExperience.id)) {
         await storage.createVenueExperience({
           venueId: chicagoVenue.id,
           experienceId: jurassicExperience.id,
@@ -1264,7 +1264,7 @@ async function initializeTestData() {
         });
       }
       
-      if (!venueExperiences.some(ve => ve.venueId === chicagoVenue.id && ve.experienceId === medusaExperience.id)) {
+      if (!venueExperiencesData.some(ve => ve.venueId === chicagoVenue.id && ve.experienceId === medusaExperience.id)) {
         await storage.createVenueExperience({
           venueId: chicagoVenue.id,
           experienceId: medusaExperience.id,
@@ -1272,7 +1272,7 @@ async function initializeTestData() {
         });
       }
       
-      if (!venueExperiences.some(ve => ve.venueId === chicagoVenue.id && ve.experienceId === spaceExperience.id)) {
+      if (!venueExperiencesData.some(ve => ve.venueId === chicagoVenue.id && ve.experienceId === spaceExperience.id)) {
         await storage.createVenueExperience({
           venueId: chicagoVenue.id,
           experienceId: spaceExperience.id,
