@@ -4,20 +4,22 @@ import fs from 'fs-extra';
 import { Request } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 
-// Configure storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const uploadDir = 'public/uploads/experiences';
-    fs.ensureDirSync(uploadDir);
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    // Generate a unique filename with original extension
-    const uniqueId = uuidv4();
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `${uniqueId}${ext}`);
-  }
-});
+// Configure storage factory function to handle different upload types
+const createStorage = (type: 'experiences' | 'products') => {
+  return multer.diskStorage({
+    destination: (req, file, cb) => {
+      const uploadDir = `public/uploads/${type}`;
+      fs.ensureDirSync(uploadDir);
+      cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+      // Generate a unique filename with original extension
+      const uniqueId = uuidv4();
+      const ext = path.extname(file.originalname).toLowerCase();
+      cb(null, `${uniqueId}${ext}`);
+    }
+  });
+};
 
 // File filter to only accept image files
 const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
@@ -35,7 +37,13 @@ const limits = {
 };
 
 export const experienceImageUpload = multer({
-  storage,
+  storage: createStorage('experiences'),
+  fileFilter,
+  limits
+});
+
+export const productImageUpload = multer({
+  storage: createStorage('products'),
   fileFilter,
   limits
 });

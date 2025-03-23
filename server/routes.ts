@@ -1,10 +1,10 @@
 import express, { type Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertUserSchema, insertBookingSchema, insertCartItemSchema, insertExperienceSchema } from "@shared/schema";
+import { insertUserSchema, insertBookingSchema, insertCartItemSchema, insertExperienceSchema, insertProductSchema } from "@shared/schema";
 import { z } from "zod";
 import { nanoid } from "nanoid";
-import { experienceImageUpload, removeImage } from "./services/upload";
+import { experienceImageUpload, productImageUpload, removeImage } from "./services/upload";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API Routes
@@ -417,6 +417,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error uploading gallery images:", error);
       res.status(500).json({ message: "Failed to upload gallery images", error: (error as Error).message });
+    }
+  });
+
+  // Product management endpoints
+  app.post("/api/products", async (req: Request, res: Response) => {
+    try {
+      const productData = insertProductSchema.parse(req.body);
+      const product = await storage.createProduct(productData);
+      res.status(201).json(product);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid product data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to create product" });
+    }
+  });
+
+  app.put("/api/products/:id", async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const productId = parseInt(id);
+      
+      // Validate the update data using the insert schema, but make all fields optional
+      const productSchema = insertProductSchema.partial();
+      const productData = productSchema.parse(req.body);
+      
+      const updatedProduct = await storage.updateProduct(productId, productData);
+      
+      if (!updatedProduct) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+      
+      res.json(updatedProduct);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid product data", errors: error.errors });
+      }
+      res.status(500).json({ message: "Failed to update product" });
+    }
+  });
+
+  // Product image upload endpoint
+  app.post("/api/upload/product/:id", productImageUpload.single('image'), async (req: Request, res: Response) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No image file provided" });
+      }
+
+      const productId = parseInt(req.params.id);
+      const product = await storage.getProduct(productId);
+      
+      if (!product) {
+        return res.status(404).json({ message: "Product not found" });
+      }
+
+      // If there's an existing image that's not a default one, remove it
+      if (product.imageUrl && product.imageUrl.startsWith('/uploads/')) {
+        await removeImage(product.imageUrl);
+      }
+
+      // Update path to be relative to public directory for serving
+      const imageUrl = `/uploads/products/${req.file.filename}`;
+      
+      // Update the product with the new image URL
+      const updatedProduct = await storage.updateProduct(productId, {
+        imageUrl
+      });
+      
+      res.json({
+        success: true,
+        imageUrl,
+        product: updatedProduct
+      });
+    } catch (error) {
+      console.error("Error uploading product image:", error);
+      res.status(500).json({ message: "Failed to upload product image", error: (error as Error).message });
     }
   });
 
