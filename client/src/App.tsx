@@ -15,6 +15,7 @@ import Contact from "@/pages/contact";
 import Login from "@/pages/login";
 import Register from "@/pages/register";
 import AdminExperiences from "@/pages/admin/experiences";
+import AdminProducts from "@/pages/admin/products";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import CartSidebar from "@/components/layout/CartSidebar";
@@ -34,6 +35,7 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/admin/experiences" component={AdminExperiences} />
+      <Route path="/admin/products" component={AdminProducts} />
       <Route component={NotFound} />
     </Switch>
   );

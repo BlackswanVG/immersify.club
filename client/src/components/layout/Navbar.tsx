@@ -1,8 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Sun, Moon, ShoppingBag, Menu, X } from "lucide-react";
+import { Sun, Moon, ShoppingBag, Menu, X, ChevronDown } from "lucide-react";
 import { useCart } from "@/hooks/use-cart";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -90,14 +96,27 @@ const Navbar = () => {
           </div>
           
           <div className="flex items-center space-x-4">
-            <Link 
-              href="/admin/experiences"
-              className="hidden md:block"
-            >
-              <Button className="bg-primary text-white hover:bg-primary/90">
-                Admin Panel
-              </Button>
-            </Link>
+            <div className="hidden md:block">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="bg-primary text-white hover:bg-primary/90">
+                    Admin Panel <ChevronDown className="h-4 w-4 ml-1" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/experiences" className="w-full cursor-pointer">
+                      Manage Experiences
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/products" className="w-full cursor-pointer">
+                      Manage Merchandise
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
             
             <button
               onClick={toggleTheme}
@@ -152,13 +171,25 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
-              <Link
-                href="/admin/experiences"
-                onClick={closeMenu}
-                className={`py-2 px-4 bg-primary text-white hover:bg-primary/90 rounded-md transition-colors font-medium`}
-              >
-                Admin Panel
-              </Link>
+              <div className="py-2 px-4 bg-gray-200 dark:bg-gray-700 rounded-md">
+                <h3 className="font-medium mb-2">Admin Panel</h3>
+                <div className="space-y-2 pl-2">
+                  <Link
+                    href="/admin/experiences"
+                    onClick={closeMenu}
+                    className="block py-1 px-2 text-primary hover:bg-gray-300 dark:hover:bg-gray-600 rounded transition-colors"
+                  >
+                    Manage Experiences
+                  </Link>
+                  <Link
+                    href="/admin/products"
+                    onClick={closeMenu}
+                    className="block py-1 px-2 text-primary hover:bg-gray-300 dark:hover:bg-gray-600 rounded transition-colors"
+                  >
+                    Manage Merchandise
+                  </Link>
+                </div>
+              </div>
               <Link href="/login" onClick={closeMenu}>
                 <Button className="w-full bg-primary hover:bg-primary/90">Sign In</Button>
               </Link>
