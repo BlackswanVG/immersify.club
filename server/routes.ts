@@ -34,6 +34,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to fetch experience" });
     }
   });
+  
+  // Update an experience by ID
+  app.put("/api/experiences/:id", async (req: Request, res: Response) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid experience ID" });
+      }
+      
+      const updatedExperience = await storage.updateExperience(id, req.body);
+      if (!updatedExperience) {
+        return res.status(404).json({ message: "Experience not found" });
+      }
+      
+      res.json(updatedExperience);
+    } catch (error) {
+      console.error("Error updating experience:", error);
+      res.status(500).json({ message: "Failed to update experience" });
+    }
+  });
 
   app.get("/api/venues", async (req: Request, res: Response) => {
     try {
