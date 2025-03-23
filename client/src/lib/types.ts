@@ -34,6 +34,7 @@ export interface Experience {
   requirements?: string;
   specialEquipment?: string;
   imageUrl: string;
+  galleryImages?: string[];
   isPopular: boolean;
   isNew: boolean;
   createdAt: string;
