@@ -997,8 +997,12 @@ async function initializeTestData() {
   try {
     console.log("Checking if database needs sample data...");
     const experiences = await storage.getAllExperiences();
+    const allVenueExperiences = await db.select().from(venueExperiences);
     
-    if (experiences.length < 5) {
+    console.log(`Found ${experiences.length} experiences and ${allVenueExperiences.length} venue-experience relationships`);
+    
+    // We need at least 5 experiences and 9 venue-experience relationships (3 venues × 3 experiences)
+    if (experiences.length < 5 || allVenueExperiences.length < 9) {
       console.log("Adding more sample data...");
       
       // Add membership tiers if they don't exist
