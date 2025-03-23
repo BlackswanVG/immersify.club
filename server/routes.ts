@@ -1,9 +1,10 @@
-import type { Express, Request, Response } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertUserSchema, insertBookingSchema, insertCartItemSchema } from "@shared/schema";
+import { insertUserSchema, insertBookingSchema, insertCartItemSchema, insertExperienceSchema } from "@shared/schema";
 import { z } from "zod";
 import { nanoid } from "nanoid";
+import { experienceImageUpload, removeImage } from "./services/upload";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API Routes
@@ -344,6 +345,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(200).json({ message: "No active session" });
     }
   });
+
+  // Image upload endpoints
+  app.post("/api/upload/experience/:id", experienceImageUpload.single('image'), async (req: Request, res: Response) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No image file provided" });
+      }
+
+      const experienceId = parseInt(req.params.id);
+      const experience = await storage.getExperience(experienceId);
+      
+      if (!experience) {
+        return res.status(404).json({ message: "Experience not found" });
+      }
+
+      // If there's an existing image that's not a default one, remove it
+      if (experience.imageUrl && experience.imageUrl.startsWith('/uploads/')) {
+        await removeImage(experience.imageUrl);
+      }
+
+      // Update path to be relative to public directory for serving
+      const imageUrl = `/uploads/experiences/${req.file.filename}`;
+      
+      // Update the experience with the new image URL
+      const updatedExperience = await storage.updateExperience(experienceId, {
+        imageUrl
+      });
+      
+      res.json({
+        success: true,
+        imageUrl,
+        experience: updatedExperience
+      });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      res.status(500).json({ message: "Failed to upload image", error: (error as Error).message });
+    }
+  });
+
+  // Endpoint to add multiple images to an experience gallery
+  app.post("/api/upload/experience/:id/gallery", experienceImageUpload.array('images', 5), async (req: Request, res: Response) => {
+    try {
+      if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
+        return res.status(400).json({ message: "No image files provided" });
+      }
+
+      const experienceId = parseInt(req.params.id);
+      const experience = await storage.getExperience(experienceId);
+      
+      if (!experience) {
+        return res.status(404).json({ message: "Experience not found" });
+      }
+
+      // Get uploaded image URLs
+      const imageUrls = (req.files as Express.Multer.File[]).map(file => `/uploads/experiences/${file.filename}`);
+      
+      // Get existing gallery images or initialize empty array
+      const existingGallery = experience.galleryImages || [];
+      
+      // Update the experience with the combined gallery images
+      const updatedExperience = await storage.updateExperience(experienceId, {
+        galleryImages: [...existingGallery, ...imageUrls]
+      });
+      
+      res.json({
+        success: true,
+        addedImages: imageUrls,
+        experience: updatedExperience
+      });
+    } catch (error) {
+      console.error("Error uploading gallery images:", error);
+      res.status(500).json({ message: "Failed to upload gallery images", error: (error as Error).message });
+    }
+  });
+
+  // Serve static files from the public directory
+  app.use('/uploads', (req, res, next) => {
+    res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year
+    next();
+  });
+  app.use('/uploads', express.static('public/uploads'));
 
   const httpServer = createServer(app);
   return httpServer;
