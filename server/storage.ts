@@ -991,3 +991,95 @@ export class DatabaseStorage implements IStorage {
 
 // Use DatabaseStorage instead of MemStorage to persist data in Postgres
 export const storage = new DatabaseStorage();
+
+// Initialize some test data if needed
+async function initializeTestData() {
+  try {
+    console.log("Checking if database needs sample data...");
+    const experiences = await storage.getAllExperiences();
+    
+    if (experiences.length === 0) {
+      console.log("No experiences found, adding sample data...");
+      
+      // Add a sample membership tier
+      const tier = await storage.createMembershipTier({
+        name: "Silver",
+        description: "Perfect for occasional visitors",
+        monthlyPrice: 19,
+        discountPercentage: 10,
+        priorityBookingHours: 24,
+        guestPasses: 0,
+        featuredTier: false
+      });
+      
+      console.log("Created membership tier:", tier);
+      
+      // Add a sample experience
+      const experience = await storage.createExperience({
+        name: "Cosmic Playground",
+        slug: "cosmic-playground",
+        description: "Enter a world where physics doesn't exist, and create your own cosmic sculptures using cutting-edge technology that responds to your movements and thoughts.",
+        shortDescription: "Enter a world where physics doesn't exist, and create your own cosmic sculptures.",
+        duration: 60,
+        price: 32,
+        minAge: 0,
+        maxAge: 100,
+        requirements: "None",
+        specialEquipment: "No special equipment",
+        imageUrl: "https://images.unsplash.com/photo-1576239319969-84afb35af6b8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+        isPopular: true,
+        isNew: false,
+        licenseInfo: "Licensed by Cosmic Innovations Inc.",
+        galleryImages: []
+      });
+      
+      console.log("Created experience:", experience);
+      
+      // Add a sample venue
+      const venue = await storage.createVenue({
+        name: "New York City",
+        slug: "nyc",
+        address: "285 W Broadway",
+        city: "New York",
+        state: "NY",
+        zipCode: "10013",
+        description: "Located in the heart of Manhattan, our NYC venue spans 3 floors with 12 unique experience rooms.",
+        imageUrl: "https://images.unsplash.com/photo-1582747448797-c78208e676c0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+        isNew: false
+      });
+      
+      console.log("Created venue:", venue);
+      
+      // Link experience to venue
+      const venueExperience = await storage.createVenueExperience({
+        venueId: venue.id,
+        experienceId: experience.id,
+        isExclusive: false
+      });
+      
+      console.log("Created venue experience link:", venueExperience);
+      
+      // Add a sample availability slot
+      const today = new Date();
+      const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      
+      const availabilitySlot = await storage.createAvailabilitySlot({
+        venueId: venue.id,
+        experienceId: experience.id,
+        date: formattedDate,
+        time: "10:00",
+        capacity: 20,
+        bookedCount: 0
+      });
+      
+      console.log("Created availability slot:", availabilitySlot);
+    } else {
+      console.log("Database already has data. Skipping initialization.");
+    }
+  } catch (error) {
+    console.error("Error initializing test data:", error);
+  }
+}
+
+// Initialize test data when the app starts
+initializeTestData();

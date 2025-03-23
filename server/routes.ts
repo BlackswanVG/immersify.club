@@ -9,9 +9,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // API Routes
   app.get("/api/experiences", async (req: Request, res: Response) => {
     try {
+      console.log("Fetching all experiences from database...");
       const experiences = await storage.getAllExperiences();
+      console.log("Experiences fetched:", experiences?.length || 0);
       res.json(experiences);
     } catch (error) {
+      console.error("Error fetching experiences:", error);
       res.status(500).json({ message: "Failed to fetch experiences" });
     }
   });
@@ -33,9 +36,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/venues", async (req: Request, res: Response) => {
     try {
+      console.log("Fetching all venues from database...");
       const venues = await storage.getAllVenues();
+      console.log("Venues fetched:", venues?.length || 0);
       res.json(venues);
     } catch (error) {
+      console.error("Error fetching venues:", error);
       res.status(500).json({ message: "Failed to fetch venues" });
     }
   });
