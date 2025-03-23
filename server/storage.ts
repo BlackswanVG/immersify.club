@@ -998,86 +998,401 @@ async function initializeTestData() {
     console.log("Checking if database needs sample data...");
     const experiences = await storage.getAllExperiences();
     
-    if (experiences.length === 0) {
-      console.log("No experiences found, adding sample data...");
+    if (experiences.length < 5) {
+      console.log("Adding more sample data...");
       
-      // Add a sample membership tier
-      const tier = await storage.createMembershipTier({
-        name: "Silver",
-        description: "Perfect for occasional visitors",
-        monthlyPrice: 19,
-        discountPercentage: 10,
-        priorityBookingHours: 24,
-        guestPasses: 0,
-        featuredTier: false
-      });
+      // Add membership tiers if they don't exist
+      const tiers = await storage.getAllMembershipTiers();
+      if (tiers.length === 0) {
+        await storage.createMembershipTier({
+          name: "Silver",
+          description: "Perfect for occasional visitors",
+          monthlyPrice: 19,
+          discountPercentage: 10,
+          priorityBookingHours: 24,
+          guestPasses: 0,
+          featuredTier: false
+        });
+        
+        await storage.createMembershipTier({
+          name: "Gold",
+          description: "Best value for regular visitors",
+          monthlyPrice: 39,
+          discountPercentage: 20,
+          priorityBookingHours: 48,
+          guestPasses: 2,
+          featuredTier: true
+        });
+        
+        await storage.createMembershipTier({
+          name: "Platinum",
+          description: "Premium access for enthusiasts",
+          monthlyPrice: 59,
+          discountPercentage: 30,
+          priorityBookingHours: 72,
+          guestPasses: 4,
+          featuredTier: false
+        });
+      }
       
-      console.log("Created membership tier:", tier);
+      // Create venues if they don't exist
+      const venues = await storage.getAllVenues();
+      let nycVenue = venues.find(v => v.slug === "nyc");
+      let laVenue = venues.find(v => v.slug === "la");
+      let chicagoVenue = venues.find(v => v.slug === "chicago");
       
-      // Add a sample experience
-      const experience = await storage.createExperience({
-        name: "Cosmic Playground",
-        slug: "cosmic-playground",
-        description: "Enter a world where physics doesn't exist, and create your own cosmic sculptures using cutting-edge technology that responds to your movements and thoughts.",
-        shortDescription: "Enter a world where physics doesn't exist, and create your own cosmic sculptures.",
-        duration: 60,
-        price: 32,
-        minAge: 0,
-        maxAge: 100,
-        requirements: "None",
-        specialEquipment: "No special equipment",
-        imageUrl: "https://images.unsplash.com/photo-1576239319969-84afb35af6b8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-        isPopular: true,
-        isNew: false,
-        licenseInfo: "Licensed by Cosmic Innovations Inc.",
-        galleryImages: []
-      });
+      if (!nycVenue) {
+        nycVenue = await storage.createVenue({
+          name: "New York City",
+          slug: "nyc",
+          address: "285 W Broadway",
+          city: "New York",
+          state: "NY",
+          zipCode: "10013",
+          description: "Located in the heart of Manhattan, our NYC venue spans 3 floors with 12 unique experience rooms.",
+          imageUrl: "https://images.unsplash.com/photo-1582747448797-c78208e676c0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          isNew: false
+        });
+      }
       
-      console.log("Created experience:", experience);
+      if (!laVenue) {
+        laVenue = await storage.createVenue({
+          name: "Los Angeles",
+          slug: "la",
+          address: "8024 Melrose Ave",
+          city: "Los Angeles",
+          state: "CA",
+          zipCode: "90046",
+          description: "Our LA location offers cutting-edge immersive experiences in a 15,000 sq ft warehouse converted into a technological wonderland.",
+          imageUrl: "https://images.unsplash.com/photo-1515896769750-31548aa180ed?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          isNew: true
+        });
+      }
       
-      // Add a sample venue
-      const venue = await storage.createVenue({
-        name: "New York City",
-        slug: "nyc",
-        address: "285 W Broadway",
-        city: "New York",
-        state: "NY",
-        zipCode: "10013",
-        description: "Located in the heart of Manhattan, our NYC venue spans 3 floors with 12 unique experience rooms.",
-        imageUrl: "https://images.unsplash.com/photo-1582747448797-c78208e676c0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
-        isNew: false
-      });
+      if (!chicagoVenue) {
+        chicagoVenue = await storage.createVenue({
+          name: "Chicago",
+          slug: "chicago",
+          address: "401 N Franklin St",
+          city: "Chicago",
+          state: "IL",
+          zipCode: "60654",
+          description: "Our Chicago venue combines industrial architecture with futuristic design to create a uniquely immersive atmosphere.",
+          imageUrl: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          isNew: false
+        });
+      }
       
-      console.log("Created venue:", venue);
+      // Create experiences if needed
+      let cosmicExperience = experiences.find(e => e.slug === "cosmic-playground");
+      let jurassicExperience = experiences.find(e => e.slug === "jurassic-ride");
+      let oceanExperience = experiences.find(e => e.slug === "deep-ocean-odyssey");
+      let medusaExperience = experiences.find(e => e.slug === "medusa-trial");
+      let spaceExperience = experiences.find(e => e.slug === "space-station-rescue");
       
-      // Link experience to venue
-      const venueExperience = await storage.createVenueExperience({
-        venueId: venue.id,
-        experienceId: experience.id,
-        isExclusive: false
-      });
+      if (!cosmicExperience) {
+        cosmicExperience = await storage.createExperience({
+          name: "Cosmic Playground",
+          slug: "cosmic-playground",
+          description: "Enter a world where physics doesn't exist, and create your own cosmic sculptures using cutting-edge technology that responds to your movements and thoughts.",
+          shortDescription: "Enter a world where physics doesn't exist, and create your own cosmic sculptures.",
+          duration: 60,
+          price: 32,
+          minAge: 0,
+          maxAge: 100,
+          requirements: "None",
+          specialEquipment: "No special equipment",
+          imageUrl: "https://images.unsplash.com/photo-1576239319969-84afb35af6b8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          isPopular: true,
+          isNew: false,
+          licenseInfo: "Licensed by Cosmic Innovations Inc.",
+          galleryImages: []
+        });
+      }
       
-      console.log("Created venue experience link:", venueExperience);
+      if (!jurassicExperience) {
+        jurassicExperience = await storage.createExperience({
+          name: "Jurassic Ride",
+          slug: "jurassic-ride",
+          description: "Travel back 65 million years to witness dinosaurs in their natural habitat. This multi-sensory experience combines visual effects, physical sensations, and realistic sound design to create the ultimate prehistoric adventure.",
+          shortDescription: "Travel back 65 million years to witness dinosaurs in their natural habitat.",
+          duration: 45,
+          price: 39,
+          minAge: 8,
+          maxAge: 100,
+          requirements: "Not recommended for those with motion sickness or heart conditions",
+          specialEquipment: "All equipment provided",
+          imageUrl: "https://images.unsplash.com/photo-1525877442103-5ddb2089b2bb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          isPopular: true,
+          isNew: false,
+          licenseInfo: "Licensed by Holozoo Inc.",
+          licenseOwner: "Holozoo Inc.",
+          category: "Adventure",
+          tags: ["dinosaurs", "prehistoric", "adventure"],
+          galleryImages: []
+        });
+      }
       
-      // Add a sample availability slot
+      if (!oceanExperience) {
+        oceanExperience = await storage.createExperience({
+          name: "Deep Ocean Odyssey",
+          slug: "deep-ocean-odyssey",
+          description: "Descend to the darkest depths of the ocean in a groundbreaking experience that simulates a deep-sea expedition. Encounter bioluminescent creatures, underwater volcanoes, and marine life never seen by human eyes.",
+          shortDescription: "Descend to the darkest depths of the ocean in a groundbreaking experience.",
+          duration: 50,
+          price: 35,
+          minAge: 6,
+          maxAge: 100,
+          requirements: "None",
+          specialEquipment: "All equipment provided",
+          imageUrl: "https://images.unsplash.com/photo-1551244072-5d12893278ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          isPopular: false,
+          isNew: true,
+          licenseInfo: "Licensed by OceanVR Ltd.",
+          licenseOwner: "OceanVR Ltd.",
+          category: "Education",
+          tags: ["ocean", "marine", "education"],
+          galleryImages: []
+        });
+      }
+      
+      if (!medusaExperience) {
+        medusaExperience = await storage.createExperience({
+          name: "Medusa Trial",
+          slug: "medusa-trial",
+          description: "Step into Greek mythology as you navigate the labyrinth of the Medusa. Using advanced haptic technology, you'll feel the cold stone as your companions are turned to stone around you. Can you defeat the Medusa without looking at her?",
+          shortDescription: "Step into Greek mythology as you navigate the labyrinth of the Medusa.",
+          duration: 40,
+          price: 29,
+          minAge: 12,
+          maxAge: 100,
+          requirements: "Not recommended for those with claustrophobia",
+          specialEquipment: "All equipment provided",
+          imageUrl: "https://images.unsplash.com/photo-1608506375591-b90e055d9eec?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          isPopular: false,
+          isNew: false,
+          licenseInfo: "Licensed by BlackSwan Guru LLC",
+          licenseOwner: "BlackSwan Guru LLC",
+          category: "Mythology",
+          tags: ["greek", "mythology", "puzzle"],
+          galleryImages: []
+        });
+      }
+      
+      if (!spaceExperience) {
+        spaceExperience = await storage.createExperience({
+          name: "Space Station Rescue",
+          slug: "space-station-rescue",
+          description: "A team-based experience where you and your crew must work together to repair a critically damaged space station. Solve complex puzzles, perform spacewalks, and navigate zero-gravity environments to save the day.",
+          shortDescription: "Work together to repair a critically damaged space station.",
+          duration: 75,
+          price: 45,
+          minAge: 14,
+          maxAge: 100,
+          requirements: "Teamwork required, 4-6 participants",
+          specialEquipment: "All equipment provided",
+          imageUrl: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          isPopular: true,
+          isNew: true,
+          licenseInfo: "Licensed by Orbital Entertainment",
+          licenseOwner: "Orbital Entertainment",
+          category: "Team",
+          tags: ["space", "teamwork", "puzzle"],
+          galleryImages: []
+        });
+      }
+      
+      // Link experiences to venues if needed
+      const venueExperiencesData = await db.select().from(venueExperiences);
+      
+      // NYC Venue Experiences
+      if (!venueExperiencesData.some(ve => ve.venueId === nycVenue.id && ve.experienceId === cosmicExperience.id)) {
+        await storage.createVenueExperience({
+          venueId: nycVenue.id,
+          experienceId: cosmicExperience.id,
+          isExclusive: false
+        });
+      }
+      
+      if (!venueExperiencesData.some(ve => ve.venueId === nycVenue.id && ve.experienceId === jurassicExperience.id)) {
+        await storage.createVenueExperience({
+          venueId: nycVenue.id,
+          experienceId: jurassicExperience.id,
+          isExclusive: false
+        });
+      }
+      
+      if (!venueExperiencesData.some(ve => ve.venueId === nycVenue.id && ve.experienceId === medusaExperience.id)) {
+        await storage.createVenueExperience({
+          venueId: nycVenue.id,
+          experienceId: medusaExperience.id,
+          isExclusive: false
+        });
+      }
+      
+      // LA Venue Experiences
+      if (!venueExperiencesData.some(ve => ve.venueId === laVenue.id && ve.experienceId === cosmicExperience.id)) {
+        await storage.createVenueExperience({
+          venueId: laVenue.id,
+          experienceId: cosmicExperience.id,
+          isExclusive: false
+        });
+      }
+      
+      if (!venueExperiences.some(ve => ve.venueId === laVenue.id && ve.experienceId === oceanExperience.id)) {
+        await storage.createVenueExperience({
+          venueId: laVenue.id,
+          experienceId: oceanExperience.id,
+          isExclusive: true
+        });
+      }
+      
+      if (!venueExperiences.some(ve => ve.venueId === laVenue.id && ve.experienceId === spaceExperience.id)) {
+        await storage.createVenueExperience({
+          venueId: laVenue.id,
+          experienceId: spaceExperience.id,
+          isExclusive: false
+        });
+      }
+      
+      // Chicago Venue Experiences
+      if (!venueExperiences.some(ve => ve.venueId === chicagoVenue.id && ve.experienceId === jurassicExperience.id)) {
+        await storage.createVenueExperience({
+          venueId: chicagoVenue.id,
+          experienceId: jurassicExperience.id,
+          isExclusive: false
+        });
+      }
+      
+      if (!venueExperiences.some(ve => ve.venueId === chicagoVenue.id && ve.experienceId === medusaExperience.id)) {
+        await storage.createVenueExperience({
+          venueId: chicagoVenue.id,
+          experienceId: medusaExperience.id,
+          isExclusive: false
+        });
+      }
+      
+      if (!venueExperiences.some(ve => ve.venueId === chicagoVenue.id && ve.experienceId === spaceExperience.id)) {
+        await storage.createVenueExperience({
+          venueId: chicagoVenue.id,
+          experienceId: spaceExperience.id,
+          isExclusive: false
+        });
+      }
+      
+      // Add availability slots for each venue-experience combination
+      // Today
       const today = new Date();
-      const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      const formattedToday = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
       
-      const availabilitySlot = await storage.createAvailabilitySlot({
-        venueId: venue.id,
-        experienceId: experience.id,
-        date: formattedDate,
-        time: "10:00",
-        capacity: 20,
-        bookedCount: 0
-      });
+      // Tomorrow
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const formattedTomorrow = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
       
-      console.log("Created availability slot:", availabilitySlot);
+      // Day after tomorrow
+      const dayAfter = new Date();
+      dayAfter.setDate(dayAfter.getDate() + 2);
+      const formattedDayAfter = `${dayAfter.getFullYear()}-${String(dayAfter.getMonth() + 1).padStart(2, '0')}-${String(dayAfter.getDate()).padStart(2, '0')}`;
+      
+      // NYC venue slots
+      await addAvailabilitySlotsIfNotExist(nycVenue.id, cosmicExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
+      await addAvailabilitySlotsIfNotExist(nycVenue.id, jurassicExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
+      await addAvailabilitySlotsIfNotExist(nycVenue.id, medusaExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
+      
+      // LA venue slots
+      await addAvailabilitySlotsIfNotExist(laVenue.id, cosmicExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
+      await addAvailabilitySlotsIfNotExist(laVenue.id, oceanExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
+      await addAvailabilitySlotsIfNotExist(laVenue.id, spaceExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
+      
+      // Chicago venue slots
+      await addAvailabilitySlotsIfNotExist(chicagoVenue.id, jurassicExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
+      await addAvailabilitySlotsIfNotExist(chicagoVenue.id, medusaExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
+      await addAvailabilitySlotsIfNotExist(chicagoVenue.id, spaceExperience.id, [formattedToday, formattedTomorrow, formattedDayAfter]);
+      
+      // Add products for merchandise
+      const products = await storage.getAllProducts();
+      if (products.length === 0) {
+        await storage.createProduct({
+          name: "Immersify T-Shirt",
+          slug: "immersify-tshirt",
+          description: "Premium quality cotton t-shirt with the Immersify logo. Available in multiple sizes.",
+          price: 24.99,
+          imageUrl: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          category: "Apparel",
+          inventory: 100
+        });
+        
+        await storage.createProduct({
+          name: "Cosmic Playground Poster",
+          slug: "cosmic-playground-poster",
+          description: "Limited edition 18\"x24\" poster featuring artwork from the Cosmic Playground experience.",
+          price: 19.99,
+          imageUrl: "https://images.unsplash.com/photo-1579541591970-e5cf1313777f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          category: "Art",
+          inventory: 50
+        });
+        
+        await storage.createProduct({
+          name: "Jurassic Ride Action Figure Set",
+          slug: "jurassic-ride-figures",
+          description: "Set of 5 detailed dinosaur figures from the Jurassic Ride experience. Perfect for collectors!",
+          price: 34.99,
+          imageUrl: "https://images.unsplash.com/photo-1516981879613-9f5da904015f?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          category: "Toys",
+          inventory: 75
+        });
+        
+        await storage.createProduct({
+          name: "Deep Ocean Water Bottle",
+          slug: "deep-ocean-bottle",
+          description: "Stainless steel water bottle featuring artwork inspired by the Deep Ocean Odyssey experience.",
+          price: 29.99,
+          imageUrl: "https://images.unsplash.com/photo-1625708458528-822a6c49fc00?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          category: "Accessories",
+          inventory: 60
+        });
+        
+        await storage.createProduct({
+          name: "Medusa Trial Puzzle",
+          slug: "medusa-puzzle",
+          description: "1000-piece jigsaw puzzle featuring the intricate labyrinth from the Medusa Trial experience.",
+          price: 27.99,
+          imageUrl: "https://images.unsplash.com/photo-1595531172949-29a7dd4f30c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80",
+          category: "Games",
+          inventory: 40
+        });
+      }
+      
+      console.log("Sample data initialization complete.");
     } else {
-      console.log("Database already has data. Skipping initialization.");
+      console.log("Database already has adequate data. Skipping initialization.");
     }
   } catch (error) {
     console.error("Error initializing test data:", error);
+  }
+}
+
+// Helper function to add availability slots if they don't exist
+async function addAvailabilitySlotsIfNotExist(venueId: number, experienceId: number, dates: string[]) {
+  const times = ["09:00", "11:00", "13:00", "15:00", "17:00", "19:00"];
+  
+  for (const date of dates) {
+    for (const time of times) {
+      const existingSlots = await storage.getAvailabilitySlots(venueId, experienceId, date);
+      const slotExists = existingSlots.some(slot => slot.time === time);
+      
+      if (!slotExists) {
+        await storage.createAvailabilitySlot({
+          venueId,
+          experienceId,
+          date,
+          time,
+          capacity: 20,
+          bookedCount: 0
+        });
+      }
+    }
   }
 }
 
