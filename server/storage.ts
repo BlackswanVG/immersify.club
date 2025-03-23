@@ -10,7 +10,7 @@ import {
   membershipTiers, type MembershipTier, type InsertMembershipTier
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, like, sql } from "drizzle-orm";
+import { eq, and, like, sql, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -759,21 +759,33 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getVenueExperiences(venueId: number): Promise<Experience[]> {
-    const venueExperiencesList = await db
-      .select()
-      .from(venueExperiences)
-      .where(eq(venueExperiences.venueId, venueId));
+    try {
+      console.log(`Getting experiences for venue ID: ${venueId}`);
+      const venueExperiencesList = await db
+        .select()
+        .from(venueExperiences)
+        .where(eq(venueExperiences.venue_id, venueId));
 
-    if (venueExperiencesList.length === 0) {
+      console.log(`Found ${venueExperiencesList.length} venue-experience mappings for venue ID ${venueId}`);
+      
+      if (venueExperiencesList.length === 0) {
+        return [];
+      }
+
+      const experienceIds = venueExperiencesList.map(ve => ve.experience_id);
+      console.log(`Experience IDs to fetch: ${experienceIds.join(', ')}`);
+      
+      const result = await db
+        .select()
+        .from(experiences)
+        .where(inArray(experiences.id, experienceIds));
+        
+      console.log(`Retrieved ${result.length} experiences`);
+      return result;
+    } catch (error) {
+      console.error('Error in getVenueExperiences:', error);
       return [];
     }
-
-    const experienceIds = venueExperiencesList.map(ve => ve.experienceId);
-    
-    return db
-      .select()
-      .from(experiences)
-      .where(sql`${experiences.id} IN (${experienceIds.join(',')})`);
   }
 
   // Venue Experiences
@@ -789,14 +801,14 @@ export class DatabaseStorage implements IStorage {
     return db
       .select()
       .from(venueExperiences)
-      .where(eq(venueExperiences.venueId, venueId));
+      .where(eq(venueExperiences.venue_id, venueId));
   }
 
   async getVenueExperiencesByExperienceId(experienceId: number): Promise<VenueExperience[]> {
     return db
       .select()
       .from(venueExperiences)
-      .where(eq(venueExperiences.experienceId, experienceId));
+      .where(eq(venueExperiences.experience_id, experienceId));
   }
 
   // Availability Slots
