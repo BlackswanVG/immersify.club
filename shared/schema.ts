@@ -195,3 +195,79 @@ export type InsertCartItem = z.infer<typeof insertCartItemSchema>;
 
 export type MembershipTier = typeof membershipTiers.$inferSelect;
 export type InsertMembershipTier = z.infer<typeof insertMembershipTierSchema>;
+
+// Define relations
+export const usersRelations = relations(users, ({ many }) => ({
+  bookings: many(bookings),
+  cartItems: many(cartItems)
+}));
+
+export const experiencesRelations = relations(experiences, ({ many }) => ({
+  venueExperiences: many(venueExperiences),
+  availabilitySlots: many(availabilitySlots),
+  bookings: many(bookings),
+  cartItems: many(cartItems)
+}));
+
+export const venuesRelations = relations(venues, ({ many }) => ({
+  venueExperiences: many(venueExperiences),
+  availabilitySlots: many(availabilitySlots),
+  bookings: many(bookings)
+}));
+
+export const venueExperiencesRelations = relations(venueExperiences, ({ one }) => ({
+  venue: one(venues, {
+    fields: [venueExperiences.venueId],
+    references: [venues.id]
+  }),
+  experience: one(experiences, {
+    fields: [venueExperiences.experienceId],
+    references: [experiences.id]
+  })
+}));
+
+export const availabilitySlotsRelations = relations(availabilitySlots, ({ one, many }) => ({
+  venue: one(venues, {
+    fields: [availabilitySlots.venueId],
+    references: [venues.id]
+  }),
+  experience: one(experiences, {
+    fields: [availabilitySlots.experienceId],
+    references: [experiences.id]
+  }),
+  bookings: many(bookings)
+}));
+
+export const bookingsRelations = relations(bookings, ({ one }) => ({
+  user: one(users, {
+    fields: [bookings.userId],
+    references: [users.id]
+  }),
+  venue: one(venues, {
+    fields: [bookings.venueId],
+    references: [venues.id]
+  }),
+  experience: one(experiences, {
+    fields: [bookings.experienceId],
+    references: [experiences.id]
+  })
+}));
+
+export const productsRelations = relations(products, ({ many }) => ({
+  cartItems: many(cartItems)
+}));
+
+export const cartItemsRelations = relations(cartItems, ({ one }) => ({
+  user: one(users, {
+    fields: [cartItems.userId],
+    references: [users.id]
+  }),
+  product: one(products, {
+    fields: [cartItems.productId],
+    references: [products.id]
+  }),
+  experience: one(experiences, {
+    fields: [cartItems.experienceId],
+    references: [experiences.id]
+  })
+}));
