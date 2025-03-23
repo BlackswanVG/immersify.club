@@ -45,15 +45,14 @@ const Navbar = () => {
     setIsMenuOpen(false);
   };
 
-  const navLinks = [
+  const mainNavLinks = [
     { name: "Home", href: "/" },
     { name: "Experiences", href: "/experiences" },
     { name: "Book", href: "/booking" },
     { name: "Membership", href: "/membership" },
     { name: "Merch", href: "/merch" },
     { name: "Franchise", href: "/franchise" },
-    { name: "Contact", href: "/contact" },
-    { name: "Admin", href: "/admin/experiences" }
+    { name: "Contact", href: "/contact" }
   ];
 
   return (
@@ -75,7 +74,7 @@ const Navbar = () => {
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-6">
-            {navLinks.map((link) => (
+            {mainNavLinks.map((link) => (
               <Link 
                 key={link.href} 
                 href={link.href}
@@ -91,6 +90,15 @@ const Navbar = () => {
           </div>
           
           <div className="flex items-center space-x-4">
+            <Link 
+              href="/admin/experiences"
+              className="hidden md:block"
+            >
+              <Button className="bg-primary text-white hover:bg-primary/90">
+                Admin Panel
+              </Button>
+            </Link>
+            
             <button
               onClick={toggleTheme}
               className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
@@ -132,7 +140,7 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-4">
             <div className="flex flex-col space-y-3">
-              {navLinks.map((link) => (
+              {mainNavLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -144,6 +152,13 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
+              <Link
+                href="/admin/experiences"
+                onClick={closeMenu}
+                className={`py-2 px-4 bg-primary text-white hover:bg-primary/90 rounded-md transition-colors font-medium`}
+              >
+                Admin Panel
+              </Link>
               <Link href="/login" onClick={closeMenu}>
                 <Button className="w-full bg-primary hover:bg-primary/90">Sign In</Button>
               </Link>
