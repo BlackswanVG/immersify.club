@@ -52,7 +52,8 @@ const Navbar = () => {
     { name: "Membership", href: "/membership" },
     { name: "Merch", href: "/merch" },
     { name: "Franchise", href: "/franchise" },
-    { name: "Contact", href: "/contact" }
+    { name: "Contact", href: "/contact" },
+    { name: "Admin", href: "/admin/experiences" }
   ];
 
   return (
