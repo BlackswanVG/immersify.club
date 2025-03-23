@@ -75,9 +75,9 @@ export default function ExpansionMap() {
     <Card className="border-0 shadow-sm bg-gradient-to-br from-background to-muted">
       <CardHeader>
         <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight mb-2">Our Expansion Journey</h2>
+          <h2 className="text-3xl font-bold tracking-tight mb-2">Our Locations USA Wide</h2>
           <p className="text-muted-foreground">
-            Currently in Rochester, NY with planned expansion throughout the Northeast corridor
+            Currently active in Rochester, NY with planned locations across the United States
           </p>
         </div>
       </CardHeader>

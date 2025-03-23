@@ -22,18 +22,8 @@ const About = () => {
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="font-medium">12+ Locations</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Across the USA</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary mr-3">
-                  <Users className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="font-medium">50K+ Members</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">And growing daily</p>
+                  <h3 className="font-medium">Available locations USA wide</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Across the country</p>
                 </div>
               </div>
               
