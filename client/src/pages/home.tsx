@@ -2,6 +2,7 @@ import Hero from "@/components/home/Hero";
 import About from "@/components/home/About";
 import FeaturedExperiences from "@/components/home/FeaturedExperiences";
 import VenueHighlight from "@/components/home/VenueHighlight";
+import ExpansionMap from "@/components/home/ExpansionMap";
 import CallToAction from "@/components/home/CallToAction";
 import { Helmet } from 'react-helmet';
 
@@ -18,6 +19,9 @@ export default function Home() {
         <About />
         <FeaturedExperiences />
         <VenueHighlight />
+        <div className="container my-20 mx-auto px-4">
+          <ExpansionMap />
+        </div>
         <CallToAction />
       </div>
     </>
